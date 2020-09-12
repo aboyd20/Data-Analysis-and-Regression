@@ -1,0 +1,64 @@
+#analysis of House Sales dataset
+myd = read.table ("housesales.txt", header=T) #load text file in R
+
+# Had to use (header=T) since first row contains variables names
+
+#create dummy variables
+
+mregion = (myd$Region =='M') *1
+ttype = (myd$Type== 'T' ) *1
+
+#compute correlation values
+
+cor myd$Price, myd$Cost)
+pairs (-myd$Price+ myd$Cost+ mregion+ ttype)
+
+#create scatterplots
+
+scatterplot (myd$Price, myd$Cost, groups=myd$Region, smooth=F, reg.line=F)
+scatterplot (myd$Price, myd$Cost, groups=myd$Type, smooth=F, reg.line=F)
+
+
+#labeled plots using different symbols
+
+## Multiple Linear Regression
+
+# FITTING MODEL M1
+fit <- lm(Price~Cost+mregion+ttype,data=myd)
+summary(fit) # show results
+
+# FITTING MODEL M2
+fit <- Im(Price~Cost+ttype,data=myd)
+summary (fit) # show results
+
+#analysls of variance table to display MSE/SSE values
+
+anova( fit)
+
+# Confidence Intervals for model parameters
+confint(fit, level=0.95 )
+
+#Diagnostic Methods of Model
+
+#residuals vs fitted values plot
+plot(fitted(fit) , rstandard(fit) , main="Predicted vs residuals plot" )
+abline (a=0, b=0, col='red' )
+
+plot(myd$Cost, rstandard(fit), main= "Residuals vs Lot Cost plot")
+abline (a=0, b=0, col='red')
+
+
+plot(ttype, rstandard(fit), main = "Residuals vs Home Type',)
+abline (a=0, b=0, co1='red')
+
+#normal probability plot of residuafs
+qqnorm (rstandard(fit))
+qqline (rstandard(fit), col = 2)
+
+
+# returning observations with I standard reslduals I >3
+myd[which (rstandard (fit)>3), ]
+
+
+#boxplot
+Boxplot(myd$Price~myd$Region )
